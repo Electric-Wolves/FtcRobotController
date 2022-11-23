@@ -25,13 +25,10 @@ public class RobotHardware {
     public DcMotor backLeft = null;
     public DcMotor backRight = null;
 
-    public DcMotorSimple stageOne = null;
-    public DcMotorSimple stageTwo = null;
+    public DcMotorSimple slideLift = null;
 
     public Servo leftGrip = null;
     public Servo rightGrip = null;
-
-    public ColorSensor colorSensor = null;
 
     public DcMotor leftEncoder = null;
     public DcMotor rightEncoder = null;
@@ -57,15 +54,11 @@ public class RobotHardware {
         backRight = hardwareMap.get(DcMotor.class, "BR");
 
         // SPARK Mini Stage one and two motors
-        stageOne = hardwareMap.get(DcMotorSimple.class, "stage1motor");
-        stageTwo = hardwareMap.get(DcMotorSimple.class, "stage2motor");
+        slideLift = hardwareMap.get(DcMotorSimple.class, "slideLift");
 
         // Gripper Servos
         leftGrip = hardwareMap.get(Servo.class, "leftGrip");
         rightGrip = hardwareMap.get(Servo.class, "rightGrip");
-
-        // 12C Sensors
-        colorSensor = hardwareMap.get(ColorSensor.class, "color");
 
         // Encoders occupy built-in motor encoder ports, so needs to be shadowed
         leftEncoder = frontLeft;
@@ -87,7 +80,7 @@ public class RobotHardware {
         // Adjusting the Forward (positive value) Direction to be uniform
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
 
         // When the motors are not moving, they will brake
@@ -233,13 +226,5 @@ public class RobotHardware {
     public double getHeading() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
-    }
-
-    public void wait(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
     }
 }

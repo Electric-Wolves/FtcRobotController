@@ -21,6 +21,7 @@ public class DriverTeleOp extends LinearOpMode {
         RobotHardware robot = new RobotHardware(hardwareMap);
         Thread evanControl, evanControlB, ianControl, ianControlB;
 
+
         evanControl = new Thread() {
             @Override
             public void run() {
@@ -28,82 +29,27 @@ public class DriverTeleOp extends LinearOpMode {
                     //Evan's Controls:
                     // Stage 1 Control
                     while (gamepad2.left_stick_y != 0) {
-                        robot.stageOne.setPower(gamepad2.left_stick_y);
+                        robot.slideLift.setPower(gamepad2.left_stick_y);
                     }
                     if (gamepad2.left_stick_y == 0) {
-                        robot.stageOne.setPower(0);
+                        robot.slideLift.setPower(0);
                     }
 
-                    /*
-                    //Gripper Up/Down
-                    while (gamepad2.right_trigger != 0) {
-                        robot.gripperTilter.setPower(0.25); //Up when pressed
-                    }
-                    if (gamepad2.right_trigger == 0) {
-                        robot.gripperTilter.setPower(0); //Stop when not pressed
+                    if (gamepad2.left_trigger != 0) {
+                        robot.leftGrip.setPosition(1); //Closed position
                     }
 
-                    while (gamepad2.left_trigger != 0) {
-                        robot.gripperTilter.setPower(-0.25); //Down when pressed
-                    }
-                    if (gamepad2.left_trigger == 0) {
-                        robot.gripperTilter.setPower(0); //Stop when not pressed
+                    if (gamepad2.right_trigger != 0) {
+                        robot.rightGrip.setPosition(0); //Closed position
                     }
 
                     //Gripper Open/Close
                     if (gamepad2.left_bumper) {
-                        robot.gripper.setPosition(1); //Open position
+                        robot.leftGrip.setPosition(0.5); //Open position
                     }
 
                     if (gamepad2.right_bumper) {
-                        robot.gripper.setPosition(0.4); //Closed position
-                    }
-                    ?
-                     */
-
-                    //Small Adjustment Code
-                    //Also in case of gamepad1 failure, robot still has mobility
-                    if (gamepad2.x) { //Left Turn
-                        robot.frontLeft.setPower(-0.3);
-                        robot.frontRight.setPower(0.3);
-                        robot.backLeft.setPower(-0.3);
-                        robot.backRight.setPower(0.3);
-                    }
-
-                    if (gamepad2.b) { //Right Turn
-                        robot.frontLeft.setPower(0.3);
-                        robot.frontRight.setPower(-0.3);
-                        robot.backLeft.setPower(0.3);
-                        robot.backRight.setPower(-0.3);
-                    }
-
-                    if (gamepad2.y) { //Forward
-                        robot.frontLeft.setPower(0.3);
-                        robot.frontRight.setPower(0.3);
-                        robot.backLeft.setPower(0.3);
-                        robot.backRight.setPower(0.3);
-                    }
-
-                    if (gamepad2.a) { //Back
-                        robot.frontLeft.setPower(-0.3);
-                        robot.frontRight.setPower(-0.3);
-                        robot.backLeft.setPower(-0.3);
-                        robot.backRight.setPower(-0.3);
-                    }
-                }
-            }
-        };
-
-        evanControlB = new Thread() {
-            @Override
-            public void run() {
-                while (opModeIsActive()) {
-                    //Stage 2 Control
-                    while (gamepad2.right_stick_y != 0) {
-                        robot.stageTwo.setPower(gamepad2.right_stick_y);
-                    }
-                    if (gamepad2.right_stick_y == 0) {
-                        robot.stageTwo.setPower(0);
+                        robot.rightGrip.setPosition(0.4); //Open position
                     }
                 }
             }
@@ -134,7 +80,6 @@ public class DriverTeleOp extends LinearOpMode {
         waitForStart();
 
         evanControl.start();
-        evanControlB.start();
         ianControl.start();
         ianControlB.start();
 
@@ -161,11 +106,6 @@ public class DriverTeleOp extends LinearOpMode {
             telemetry.addData("Left MM", robot.ticksToMM(robot.leftEncoder.getCurrentPosition()) + " mm");
             telemetry.addData("Right MM", robot.ticksToMM(robot.rightEncoder.getCurrentPosition()) + " mm");
             telemetry.addData("Central MM", robot.ticksToMM(robot.centralEncoder.getCurrentPosition()) + " mm");
-            telemetry.addLine("\n");
-            telemetry.addData("Alpha", robot.colorSensor.alpha());
-            telemetry.addData("Red", robot.colorSensor.red());
-            telemetry.addData("Green", robot.colorSensor.green());
-            telemetry.addData("Blue", robot.colorSensor.blue());
             telemetry.addLine("\n");
 
             telemetry.update();

@@ -22,9 +22,9 @@ public class ModAuto extends LinearOpMode {
 
         robot.turnToAngle(-83, 0.35);
 
-        while (robot.colorSensor.blue() < 500) {
-            robot.setPower(0.4,0.4,0.4,0.4);
-        }
+        //while (robot.colorSensor.blue() < 500) {
+            //robot.setPower(0.4,0.4,0.4,0.4);
+        //}
         robot.stopMotors();
 
         robot.move(210, -83, 0.7);
