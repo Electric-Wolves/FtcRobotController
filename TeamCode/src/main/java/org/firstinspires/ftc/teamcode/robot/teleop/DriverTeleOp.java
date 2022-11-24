@@ -36,11 +36,11 @@ public class DriverTeleOp extends LinearOpMode {
                     }
 
                     if (gamepad2.left_trigger != 0) {
-                        robot.leftGrip.setPosition(1); //Closed position
+                        robot.leftGrip.setPosition(0); //Closed position
                     }
 
                     if (gamepad2.right_trigger != 0) {
-                        robot.rightGrip.setPosition(0); //Closed position
+                        robot.rightGrip.setPosition(1); //Closed position
                     }
 
                     //Gripper Open/Close
@@ -49,7 +49,7 @@ public class DriverTeleOp extends LinearOpMode {
                     }
 
                     if (gamepad2.right_bumper) {
-                        robot.rightGrip.setPosition(0.4); //Open position
+                        robot.rightGrip.setPosition(0.6); //Open position
                     }
                 }
             }
