@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -33,6 +34,8 @@ public class RobotHardware {
     public DcMotor leftEncoder = null;
     public DcMotor rightEncoder = null;
     public DcMotor slideLiftEncoder = null;
+
+    public TouchSensor touchSensor = null;
 
     public BNO055IMU imu = null;
 
@@ -59,6 +62,8 @@ public class RobotHardware {
         // Gripper Servos
         leftGrip = hardwareMap.get(Servo.class, "leftGrip");
         rightGrip = hardwareMap.get(Servo.class, "rightGrip");
+
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
 
         // Encoders occupy built-in motor encoder ports, so needs to be shadowed
         leftEncoder = frontLeft;

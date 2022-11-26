@@ -19,14 +19,20 @@ public class DriverTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         RobotHardware robot = new RobotHardware(hardwareMap);  // Call RobotHardware methods.
-        Thread evanControl, evanControlB, ianControl, ianControlB; // Declare threads.
+        Thread evanControl, evanControlB, evanControlC, ianControl, ianControlB; // Declare threads.
 
         evanControl = new Thread() { // Thread for lift.
             @Override
             public void run() {
                 while (opModeIsActive()) {
-                    while (gamepad2.left_stick_y != 0) { // When left stick axis position value is not zero,
-                        robot.slideLift.setPower(gamepad2.left_stick_y); // set power to value of left stick y axis position.
+                    while (gamepad2.left_stick_y > 0) { // When left stick axis position value is not zero,
+                        if (!robot.touchSensor.isPressed()) {
+                            robot.slideLift.setPower(gamepad2.left_stick_y);
+                        }
+                    }
+
+                    while (gamepad2.left_stick_y < 0) {
+                        robot.slideLift.setPower(gamepad2.left_stick_y);
                     }
 
                     robot.slideLift.setPower(0); // Set power of slide lift to zero.

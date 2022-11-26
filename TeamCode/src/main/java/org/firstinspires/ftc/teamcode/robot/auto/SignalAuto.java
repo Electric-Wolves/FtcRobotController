@@ -133,39 +133,16 @@ public class SignalAuto extends LinearOpMode {
             telemetry.update();
         }
 
+
+
         if (tagOfInterest == null || tagOfInterest.id == MIDDLE) {
-            // Code that parks in the Middle
-            robot.move(500, 0, 0.5);
+
         }
         else if (tagOfInterest.id == LEFT) {
-            // Park left, pos 1
-            // Move forward 345 mm while maintaining 0 heading @ 0.5 power
-            robot.move(345, 0, 0.5);
 
-            // Strafe to the Left for 310 mm
-            double startingDist = robot.ticksToMM(robot.centralEncoder.getCurrentPosition());
-            while (robot.ticksToMM(robot.centralEncoder.getCurrentPosition()) - startingDist < 310) {
-                robot.strafeLeft(0.7);
-            }
-            robot.stopMotors();
-
-            // Move forward 100 mm while maintaining 0 heading @ 0.5 power
-            robot.move(100, 0, 0.5);
         }
         else if (tagOfInterest.id == RIGHT) {
-            // Park right, pos 3
-            // Move forward 315 mm at 0.5 power
-            robot.move(315, 0, 0.5);
 
-            // Strafe to the Right for Parking Spot 3
-            double startingDist = robot.ticksToMM(robot.centralEncoder.getCurrentPosition());
-            while (robot.ticksToMM(robot.centralEncoder.getCurrentPosition()) - startingDist > -310) {
-                robot.strafeRight(0.7);
-            }
-            robot.stopMotors();
-
-            // Move forward 80 mm at 0.5 power
-            robot.move(80, 0, 0.5);
         }
 
         while (opModeIsActive()) {
