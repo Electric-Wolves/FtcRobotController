@@ -32,7 +32,7 @@ public class RobotHardware {
 
     public DcMotor leftEncoder = null;
     public DcMotor rightEncoder = null;
-    public DcMotor centralEncoder = null;
+    public DcMotor slideLiftEncoder = null;
 
     public BNO055IMU imu = null;
 
@@ -63,7 +63,7 @@ public class RobotHardware {
         // Encoders occupy built-in motor encoder ports, so needs to be shadowed
         leftEncoder = frontLeft;
         rightEncoder = frontRight;
-        centralEncoder = backLeft;
+        slideLiftEncoder = backLeft;
 
         // IMU Parameter setup
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -198,7 +198,7 @@ public class RobotHardware {
     }
 
     public double ticksToMM(double ticks) {
-        double mmPerTick = Math.PI * 37.5 / 8192;
+        double mmPerTick = Math.PI * 30 / 8192;
         return ticks * mmPerTick;
     }
 
@@ -221,6 +221,16 @@ public class RobotHardware {
 
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void openGripper() {
+        leftGrip.setPosition(0.5);
+        rightGrip.setPosition(0.6);
+    }
+
+    public void closeGripper() {
+        leftGrip.setPosition(0);
+        rightGrip.setPosition(1);
     }
 
     public double getHeading() {
