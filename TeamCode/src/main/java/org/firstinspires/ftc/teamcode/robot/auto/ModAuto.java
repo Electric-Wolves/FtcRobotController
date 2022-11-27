@@ -10,43 +10,37 @@ public class ModAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         RobotHardware robot = new RobotHardware(hardwareMap);
-        robot.resetEncoders();
+        Thread slideLiftRaise;
+
+        slideLiftRaise = new Thread() {
+          @Override
+          public void run() {
+              robot.closeGripper();
+
+              while (robot.ticksToMM(robot.slideLiftEncoder.getCurrentPosition()) < 605) {
+                  robot.slideLift.setPower(-0.8);
+                  robot.closeGripper();
+              }
+              robot.slideLift.setPower(0);
+
+              robot.move(80, robot.getHeading(), 0.5);
+          }
+        };
+
+        robot.closeGripper();
 
         waitForStart();
 
-        robot.move(690,0,0.7);
+        slideLiftRaise.start();
 
-        robot.turnToAngle(50, 0.35);
+        robot.move(615, 0, 0.8);
 
-        wait(500);
+        robot.closeGripper();
 
-        robot.turnToAngle(-83, 0.35);
-
-        //while (robot.colorSensor.blue() < 500) {
-            //robot.setPower(0.4,0.4,0.4,0.4);
-        //}
-        robot.stopMotors();
-
-        robot.move(210, -83, 0.7);
-
-        wait(500);
-
-        robot.reverse(300, -85,-0.5);
-
-        robot.turnToAngle(-83, 0.35);
-
-        wait(500);
-
-        robot.turnToAngle(50, 0.35);
-
-        robot.move(100, 50, 0.7);
-
-        while (robot.getHeading() > -83) {
-            robot.tankRight(0.35);
+        while (robot.getHeading() < 51) {
+            robot.tankLeft(0.4);
         }
         robot.stopMotors();
-
-        stop();
     }
 
     public void wait(int ms) {

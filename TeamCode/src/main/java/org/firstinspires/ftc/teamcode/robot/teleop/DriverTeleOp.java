@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.RobotHardware;
 
 @TeleOp(name = "L1TeleOp", group = "L1")
@@ -25,17 +26,21 @@ public class DriverTeleOp extends LinearOpMode {
             @Override
             public void run() {
                 while (opModeIsActive()) {
-                    while (gamepad2.left_stick_y > 0) { // When left stick axis position value is not zero,
-                        if (!robot.touchSensor.isPressed()) {
+                    while (gamepad2.left_stick_y != 0) {
+                        if (gamepad2.left_stick_y > 0) { // if going down ...
+                            if (robot.slideLiftEncoder.getCurrentPosition() < 2) {
+                                robot.slideLift.setPower(0);
+                            }
+                            else {
+                                robot.slideLift.setPower(gamepad2.left_stick_y);
+                            }
+                        }
+                        else if (gamepad2.left_stick_y < 0) { // if going up ...
                             robot.slideLift.setPower(gamepad2.left_stick_y);
                         }
                     }
 
-                    while (gamepad2.left_stick_y < 0) {
-                        robot.slideLift.setPower(gamepad2.left_stick_y);
-                    }
-
-                    robot.slideLift.setPower(0); // Set power of slide lift to zero.
+                    robot.slideLift.setPower(0);
                 }
             }
         };
@@ -44,21 +49,14 @@ public class DriverTeleOp extends LinearOpMode {
             @Override
             public void run() {
                 while (opModeIsActive()) {
-                    if (gamepad2.left_trigger != 0) { // If left trigger is active
-                        robot.leftGrip.setPosition(0); //Closed position
-                    }
-
-                    if (gamepad2.right_trigger != 0) { // If right trigger is active
-                        robot.rightGrip.setPosition(1); //Closed position
-                    }
 
                     //Gripper Open/Close
                     if (gamepad2.left_bumper) { // If left bumper trigger is active
-                        robot.leftGrip.setPosition(0.5); //Open position
+                        robot.openGripper(); //Open Gripper
                     }
 
                     if (gamepad2.right_bumper) { // If right bumper is active
-                        robot.rightGrip.setPosition(0.6); //Open position
+                        robot.closeGripper(); //Close GrippeR
                     }
                 }
             }
@@ -110,15 +108,15 @@ public class DriverTeleOp extends LinearOpMode {
             telemetry.addData("IMU Heading", robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle); // Displays control hub's IMU heading.
             telemetry.addData("Calculated Heading", calculatedHeading); // Display the calculated heading of the robot.
             telemetry.addLine("\n");
-            telemetry.addData("Left Encoder", robot.leftEncoder.getCurrentPosition()); // Display left encoder ticks traveled.
-            telemetry.addData("Right Encoder", robot.rightEncoder.getCurrentPosition()); // Display right encoder ticks traveled.
-            telemetry.addData("Slide Lift Encoder", robot.slideLiftEncoder.getCurrentPosition()); // Display slide lift encoder ticks traveled.
-            telemetry.addLine("\n");
             telemetry.addData("Left MM", robot.ticksToMM(robot.leftEncoder.getCurrentPosition()) + " mm"); // Display left encoder MM traveled.
             telemetry.addData("Right MM", robot.ticksToMM(robot.rightEncoder.getCurrentPosition()) + " mm"); // Display right encoder MM traveled.
             telemetry.addData("Slide Lift MM", robot.ticksToMM(robot.slideLiftEncoder.getCurrentPosition()) + " mm"); // Display slide lift encoder MM traveled.
             telemetry.addLine("\n");
-
+            telemetry.addData("Left Distance", robot.distanceLeft.getDistance(DistanceUnit.MM));
+            telemetry.addData("Right Distance", robot.distanceRight.getDistance(DistanceUnit.MM));
+            telemetry.addLine("\n");
+            telemetry.addData("Red", robot.colorSensor.red());
+            telemetry.addData("Blue", robot.colorSensor.blue());
             telemetry.update(); // Update telemetry.
 
             robot.stopMotors(); // Stop all motors.

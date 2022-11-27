@@ -7,6 +7,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -35,7 +36,10 @@ public class RobotHardware {
     public DcMotor rightEncoder = null;
     public DcMotor slideLiftEncoder = null;
 
-    public TouchSensor touchSensor = null;
+    public DistanceSensor distanceLeft = null;
+    public DistanceSensor distanceRight = null;
+
+    public ColorSensor colorSensor = null;
 
     public BNO055IMU imu = null;
 
@@ -63,12 +67,15 @@ public class RobotHardware {
         leftGrip = hardwareMap.get(Servo.class, "leftGrip");
         rightGrip = hardwareMap.get(Servo.class, "rightGrip");
 
-        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-
         // Encoders occupy built-in motor encoder ports, so needs to be shadowed
         leftEncoder = frontLeft;
         rightEncoder = frontRight;
         slideLiftEncoder = backLeft;
+
+        distanceLeft = hardwareMap.get(DistanceSensor.class, "distanceLeft");
+        distanceRight = hardwareMap.get(DistanceSensor.class, "distanceRight");
+
+        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
         // IMU Parameter setup
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -230,7 +237,7 @@ public class RobotHardware {
 
     public void openGripper() {
         leftGrip.setPosition(0.5);
-        rightGrip.setPosition(0.6);
+        rightGrip.setPosition(0.5);
     }
 
     public void closeGripper() {
