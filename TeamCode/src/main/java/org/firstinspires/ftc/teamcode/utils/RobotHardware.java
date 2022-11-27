@@ -1,22 +1,18 @@
 package org.firstinspires.ftc.teamcode.utils;
 
-import android.graphics.Color;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -244,6 +240,32 @@ public class RobotHardware {
         leftGrip.setPosition(0);
         rightGrip.setPosition(1);
     }
+
+    public void raiseLift(double targetMM, double power) {
+        while (ticksToMM(slideLiftEncoder.getCurrentPosition()) < targetMM) {
+            slideLift.setPower(power);
+            closeGripper();
+        }
+        slideLift.setPower(0);
+    }
+
+    public void lowerLift(double targetMM, double power) {
+        while (ticksToMM(slideLiftEncoder.getCurrentPosition()) > targetMM) {
+            slideLift.setPower(power);
+            closeGripper();
+        }
+        slideLift.setPower(0);
+    }
+
+    public double getFirstDist() {
+        return distanceLeft.getDistance(DistanceUnit.MM);
+    }
+
+    public double getCenterDist() {
+        return distanceRight.getDistance(DistanceUnit.MM);
+    }
+
+
 
     public double getHeading() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);

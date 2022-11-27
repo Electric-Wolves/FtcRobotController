@@ -15,21 +15,56 @@ public class ModAuto extends LinearOpMode {
         slideLiftRaise = new Thread() {
           @Override
           public void run() {
-              robot.closeGripper();
+              robot.raiseLift(605, -0.85);
 
-              while (robot.ticksToMM(robot.slideLiftEncoder.getCurrentPosition()) < 605) {
-                  robot.slideLift.setPower(-0.8);
-                  robot.closeGripper();
-              }
-              robot.slideLift.setPower(0);
+              robot.move(20, robot.getHeading(), 0.4);
 
-              robot.move(80, robot.getHeading(), 0.5);
+              robot.lowerLift(500, 0.3);
+
+              robot.openGripper();
           }
         };
 
         robot.closeGripper();
 
         waitForStart();
+
+        robot.closeGripper();
+
+        slideLiftRaise.start();
+
+        robot.move(615, robot.getHeading(), 0.8);
+
+        while (robot.getHeading() < 45) {
+            robot.tankLeft(0.4);
+        }
+        robot.stopMotors();
+
+        robot.move(75, robot.getHeading(), 0.7);
+
+        wait(500);
+
+        /*while (robot.getCenterDist() > 200) {
+            robot.tankLeft(0.3);
+        }*/
+        robot.stopMotors();
+
+
+        /*
+
+        while (robot.getFirstDist() >= 150) {
+            robot.tankLeft(0.4);
+        }
+        robot.stopMotors();
+
+        while (robot.getCenterDist() >= 150) {
+            robot.tankRight(0.4);
+        }
+        robot.stopMotors();
+        ?
+         */
+
+        /*
 
         slideLiftRaise.start();
 
@@ -41,6 +76,9 @@ public class ModAuto extends LinearOpMode {
             robot.tankLeft(0.4);
         }
         robot.stopMotors();
+        ?
+         */
+
     }
 
     public void wait(int ms) {
