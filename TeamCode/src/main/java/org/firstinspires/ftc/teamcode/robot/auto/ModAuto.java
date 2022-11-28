@@ -17,7 +17,7 @@ public class ModAuto extends LinearOpMode {
           public void run() {
               robot.raiseLift(605, 0.85);
 
-              robot.move(18, robot.getHeading(), 0.4);
+              robot.move(17, robot.getHeading(), 0.4);
 
               robot.lowerLift(500, -0.3);
 
@@ -36,13 +36,11 @@ public class ModAuto extends LinearOpMode {
 
         waitForStart();
 
-        robot.closeGripper();
-
         slideLiftRaise.start();
 
         robot.move(615, robot.getHeading(), 0.8);
 
-        while (robot.getHeading() < 47) {
+        while (robot.getHeading() < 49) {
             robot.tankLeft(0.4);
         }
         robot.stopMotors();
