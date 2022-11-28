@@ -10,18 +10,25 @@ public class ModAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         RobotHardware robot = new RobotHardware(hardwareMap);
-        Thread slideLiftRaise;
+        Thread slideLiftRaise, slideLiftLower;
 
         slideLiftRaise = new Thread() {
           @Override
           public void run() {
-              robot.raiseLift(605, -0.85);
+              robot.raiseLift(605, 0.85);
 
-              robot.move(20, robot.getHeading(), 0.4);
+              robot.move(18, robot.getHeading(), 0.4);
 
-              robot.lowerLift(500, 0.3);
+              robot.lowerLift(500, -0.3);
 
               robot.openGripper();
+          }
+        };
+
+        slideLiftLower = new Thread() {
+          @Override
+          public void run() {
+              robot.lowerLift(100, -0.85);
           }
         };
 
@@ -35,50 +42,59 @@ public class ModAuto extends LinearOpMode {
 
         robot.move(615, robot.getHeading(), 0.8);
 
-        while (robot.getHeading() < 45) {
+        while (robot.getHeading() < 47) {
             robot.tankLeft(0.4);
         }
         robot.stopMotors();
 
-        robot.move(75, robot.getHeading(), 0.7);
+        robot.move(73, robot.getHeading(), 0.7);
 
-        wait(500);
+        wait(4000);
 
-        /*while (robot.getCenterDist() > 200) {
-            robot.tankLeft(0.3);
-        }*/
-        robot.stopMotors();
+        slideLiftLower.start();
 
+        robot.reverse(160, robot.getHeading(), -0.5);
 
-        /*
+        robot.turnToAngle(-85, 0.4);
 
-        while (robot.getFirstDist() >= 150) {
-            robot.tankLeft(0.4);
+        robot.openGripper();
+
+        // Repeat until target/goal is met
+        while (robot.colorSensor.red() < 6000) {
+            // If it is too far right, adjust
+            if (robot.getHeading() < -85) {
+                robot.setPower(0.5 - 0.05, 0.5 + 0.05, 0.5 - 0.05, 0.5 + 0.05);
+            }
+            // If it is too far left, adjust
+            else if (robot.getHeading() > -85) {
+                robot.setPower(0.5 + 0.05, 0.5 - 0.05, 0.5 + 0.05, 0.5 - 0.05);
+            }
+            // Maintain otherwise
+            else {
+                robot.setPower(0.5, 0.5, 0.5, 0.5);
+            }
         }
         robot.stopMotors();
 
-        while (robot.getCenterDist() >= 150) {
-            robot.tankRight(0.4);
+        wait(1000);
+
+        while (robot.getCenterDist() > 75) {
+            // If it is too far right, adjust
+            if (robot.getHeading() < -85) {
+                robot.setPower(0.5 - 0.05, 0.5 + 0.05, 0.5 - 0.05, 0.5 + 0.05);
+            }
+            // If it is too far left, adjust
+            else if (robot.getHeading() > -85) {
+                robot.setPower(0.5 + 0.05, 0.5 - 0.05, 0.5 + 0.05, 0.5 - 0.05);
+            }
+            // Maintain otherwise
+            else {
+                robot.setPower(0.5, 0.5, 0.5, 0.5);
+            }
         }
         robot.stopMotors();
-        ?
-         */
-
-        /*
-
-        slideLiftRaise.start();
-
-        robot.move(615, 0, 0.8);
 
         robot.closeGripper();
-
-        while (robot.getHeading() < 51) {
-            robot.tankLeft(0.4);
-        }
-        robot.stopMotors();
-        ?
-         */
-
     }
 
     public void wait(int ms) {

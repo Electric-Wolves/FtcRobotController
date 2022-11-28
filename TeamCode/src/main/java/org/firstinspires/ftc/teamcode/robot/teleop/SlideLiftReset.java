@@ -14,7 +14,7 @@ public class SlideLiftReset extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             while (gamepad2.left_stick_y != 0) {
-                robot.slideLift.setPower(gamepad2.left_stick_y);
+                robot.slideLift.setPower(-gamepad2.left_stick_y);
             }
 
             robot.slideLift.setPower(0);

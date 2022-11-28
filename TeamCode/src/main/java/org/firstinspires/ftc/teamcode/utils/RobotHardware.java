@@ -91,6 +91,8 @@ public class RobotHardware {
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
 
+        slideLift.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // When the motors are not moving, they will brake
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -130,19 +132,27 @@ public class RobotHardware {
     // Method for driving forward/straight while maintaining a constant heading
     public void move(double targetMM, double targetHeading, double power) {
         // Setting the initial starting position of the robot
-        double startingTicks = leftEncoder.getCurrentPosition();
+        double startingMM = getLeftMM();
 
         // Repeat until target/goal is met
-        while (Math.abs(ticksToMM(leftEncoder.getCurrentPosition() - startingTicks)) < targetMM) {
-            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
+        while (getLeftMM() - startingMM < targetMM) {
             // If it is too far right, adjust
-            if (angles.firstAngle < targetHeading) {
-                setPower(power - 0.05, power + 0.0, power - 0.05,power + 0.05);
+            if (getHeading() < targetHeading) {
+                setPower(
+                    power - 0.05,
+                    power + 0.05,
+                    power - 0.05,
+                    power + 0.05
+                );
             }
-            // If it is too far  left, adjust
-            else if (angles.firstAngle > targetHeading) {
-                setPower(power + 0.05, power - 0.05, power + 0.05, power - 0.05);
+            // If it is too far left, adjust
+            else if (getHeading() > targetHeading) {
+                setPower(
+                    power + 0.05,
+                    power - 0.05,
+                    power + 0.05,
+                    power - 0.05
+                );
             }
             // Maintain otherwise
             else {
@@ -155,19 +165,27 @@ public class RobotHardware {
     // Method for driving forward/straight while maintaining a constant heading
     public void reverse(double targetMM, double targetHeading, double power) {
         // Setting the initial starting position of the robot
-        double startingTicks = leftEncoder.getCurrentPosition();
+        double startingMM = getLeftMM();
 
         // Repeat until target/goal is met
-        while (Math.abs(ticksToMM(leftEncoder.getCurrentPosition() - startingTicks)) < targetMM) {
-            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
+        while (startingMM - getLeftMM() < targetMM) {
             // If it is too far right, adjust
-            if (angles.firstAngle < targetHeading) {
-                setPower(power + 0.05, power - 0.0, power + 0.05,power - 0.05);
+            if (getHeading() < targetHeading) {
+                setPower(
+                    power - 0.05,
+                    power + 0.05,
+                    power - 0.05,
+                    power + 0.05
+                );
             }
             // If it is too far  left, adjust
-            else if (angles.firstAngle > targetHeading) {
-                setPower(power - 0.05, power + 0.05, power - 0.05, power + 0.05);
+            else if (getHeading() > targetHeading) {
+                setPower(
+                    power + 0.05,
+                    power - 0.05,
+                    power + 0.05,
+                    power - 0.05
+                );
             }
             // Maintain otherwise
             else {
@@ -265,7 +283,13 @@ public class RobotHardware {
         return distanceRight.getDistance(DistanceUnit.MM);
     }
 
+    public double getLeftMM() {
+        return ticksToMM(Math.abs(leftEncoder.getCurrentPosition()));
+    }
 
+    public double getRightMM() {
+        return ticksToMM(rightEncoder.getCurrentPosition());
+    }
 
     public double getHeading() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);

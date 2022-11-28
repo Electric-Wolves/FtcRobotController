@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.RobotHardware;
 
-@TeleOp(name = "L1TeleOp", group = "L1")
+@TeleOp(name = "TeleOp", group = "L1")
 public class DriverTeleOp extends LinearOpMode {
     final static double L = 170; // Distance between Encoder 0 and 1
     final static double B = 150; // Distance from midpoint of L to Encoder 2
@@ -32,11 +32,11 @@ public class DriverTeleOp extends LinearOpMode {
                                 robot.slideLift.setPower(0);
                             }
                             else {
-                                robot.slideLift.setPower(gamepad2.left_stick_y);
+                                robot.slideLift.setPower(-gamepad2.left_stick_y);
                             }
                         }
                         else if (gamepad2.left_stick_y < 0) { // if going up ...
-                            robot.slideLift.setPower(gamepad2.left_stick_y);
+                            robot.slideLift.setPower(-gamepad2.left_stick_y);
                         }
                     }
 
