@@ -12,6 +12,10 @@ public class SlideLiftReset extends LinearOpMode {
         RobotHardware robot = new RobotHardware(hardwareMap);
 
         waitForStart();
+
+        telemetry.addLine("You are now in unlocked reset mode.");
+        telemetry.update();
+
         while (opModeIsActive()) {
             while (gamepad2.left_stick_y != 0) {
                 robot.slideLift.setPower(-gamepad2.left_stick_y);

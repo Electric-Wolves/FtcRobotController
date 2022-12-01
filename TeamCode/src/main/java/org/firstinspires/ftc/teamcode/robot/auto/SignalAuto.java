@@ -21,6 +21,8 @@ package org.firstinspires.ftc.teamcode.robot.auto;
  * SOFTWARE.
  */
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -58,6 +60,28 @@ public class SignalAuto extends LinearOpMode {
         RobotHardware robot = new RobotHardware(hardwareMap);
         SignalPipeline signalPipeline = new SignalPipeline(tagSize, fx, fy, cx, cy);
 
+        Thread slideLiftRaise, slideLiftLower;
+
+        slideLiftRaise = new Thread() {
+            @Override
+            public void run() {
+                robot.raiseLift(605, 0.85);
+
+                // robot.move(17, robot.getHeading(), 0.4);
+
+                robot.lowerLift(500, -0.3);
+
+                robot.openGripper();
+            }
+        };
+
+        slideLiftLower = new Thread() {
+            @Override
+            public void run() {
+                robot.lowerLift(100, -0.85);
+            }
+        };
+
         AprilTagDetection tagOfInterest = null;
 
         robot.camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -78,6 +102,8 @@ public class SignalAuto extends LinearOpMode {
 
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = signalPipeline.getLatestDetections();
+
+            robot.closeGripper();
 
             if(currentDetections.size() != 0) {
                 boolean tagFound = false;
@@ -133,7 +159,20 @@ public class SignalAuto extends LinearOpMode {
             telemetry.update();
         }
 
+        slideLiftRaise.start();
 
+        robot.move(618, robot.getHeading(), 0.6);
+
+        while (robot.getHeading() < 42) {
+            robot.tankLeft(0.4);
+        }
+        robot.stopMotors();
+
+        robot.move(73, robot.getHeading(), 0.7);
+
+        wait(4000);
+
+        slideLiftLower.start();
 
         if (tagOfInterest == null || tagOfInterest.id == MIDDLE) {
 
@@ -150,6 +189,7 @@ public class SignalAuto extends LinearOpMode {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
@@ -158,5 +198,13 @@ public class SignalAuto extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    public void wait(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

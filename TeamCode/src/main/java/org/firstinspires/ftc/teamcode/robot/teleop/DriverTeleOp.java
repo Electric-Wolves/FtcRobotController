@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.teleop;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,10 +19,11 @@ public class DriverTeleOp extends LinearOpMode {
     final static double N = 8192; // Ticks per Revolution
     final static double mmPerTick = Math.PI * R / N;
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
         RobotHardware robot = new RobotHardware(hardwareMap);  // Call RobotHardware methods.
-        Thread evanControl, evanControlB, evanControlC, ianControl, ianControlB; // Declare threads.
+        Thread evanControl, evanControlB, ianControl, ianControlB; // Declare threads.
 
         evanControl = new Thread() { // Thread for lift.
             @Override
@@ -49,7 +52,6 @@ public class DriverTeleOp extends LinearOpMode {
             @Override
             public void run() {
                 while (opModeIsActive()) {
-
                     //Gripper Open/Close
                     if (gamepad2.left_bumper) { // If left bumper trigger is active
                         robot.openGripper(); //Open Gripper
@@ -68,6 +70,10 @@ public class DriverTeleOp extends LinearOpMode {
                 while (opModeIsActive()) {
                     while (gamepad1.left_stick_y != 0) {
                         robot.setPower(-gamepad1.left_stick_y, -gamepad1.left_stick_y, -gamepad1.left_stick_y, -gamepad1.left_stick_y);
+                    }
+
+                    while (gamepad1.left_stick_x != 0) {
+                        robot.setPower(gamepad1.left_stick_x, -gamepad1.left_stick_x, -gamepad1.left_stick_x, gamepad1.left_stick_x);
                     }
                 }
             }
@@ -92,34 +98,26 @@ public class DriverTeleOp extends LinearOpMode {
         ianControl.start();
         ianControlB.start();
 
+        telemetry.setMsTransmissionInterval(1000);
+
         while (opModeIsActive()) {
-            while (gamepad1.left_stick_x != 0) { //Strafe L/R
-                robot.frontLeft.setPower(gamepad1.left_stick_x);
-                robot.frontRight.setPower(-gamepad1.left_stick_x);
-                robot.backLeft.setPower(-gamepad1.left_stick_x);
-                robot.backRight.setPower(gamepad1.left_stick_x);
+            if (gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0) {
+                robot.stopMotors();
             }
 
-
-            double deltaHeading = mmPerTick * (robot.rightEncoder.getCurrentPosition() - robot.leftEncoder.getCurrentPosition()) / L; // Gather info to find heading.
-            double calculatedHeading = Math.toDegrees(deltaHeading); // Find the heading.
-
             //driver hub info display
-            telemetry.addData("IMU Heading", robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle); // Displays control hub's IMU heading.
-            telemetry.addData("Calculated Heading", calculatedHeading); // Display the calculated heading of the robot.
+            telemetry.addLine(String.format("IMU: %.2f Degrees", robot.getHeading())); // Displays control hub's IMU heading.
             telemetry.addLine("\n");
-            telemetry.addData("Left MM", robot.ticksToMM(robot.leftEncoder.getCurrentPosition()) + " mm"); // Display left encoder MM traveled.
-            telemetry.addData("Right MM", robot.ticksToMM(robot.rightEncoder.getCurrentPosition()) + " mm"); // Display right encoder MM traveled.
-            telemetry.addData("Slide Lift MM", robot.ticksToMM(robot.slideLiftEncoder.getCurrentPosition()) + " mm"); // Display slide lift encoder MM traveled.
+            telemetry.addLine(String.format("Left Encoder: %.2f mm", robot.getLeftMM()));
+            telemetry.addLine(String.format("Right Encoder: %.2f mm", robot.getRightMM()));
+            telemetry.addLine(String.format("Lift Encoder: %.2f mm", robot.getLiftMM()));
             telemetry.addLine("\n");
-            telemetry.addData("Left Distance", robot.distanceLeft.getDistance(DistanceUnit.MM));
-            telemetry.addData("Right Distance", robot.distanceRight.getDistance(DistanceUnit.MM));
+            telemetry.addLine(String.format("Left Distance: %.2f mm", robot.getFirstDist()));
+            telemetry.addLine(String.format("Right Distance: %.2f mm", robot.getCenterDist()));
             telemetry.addLine("\n");
             telemetry.addData("Red", robot.colorSensor.red());
             telemetry.addData("Blue", robot.colorSensor.blue());
             telemetry.update(); // Update telemetry.
-
-            robot.stopMotors(); // Stop all motors.
         }
     }
 }

@@ -129,6 +129,59 @@ public class RobotHardware {
         stopMotors();
     }
 
+    // NEXT 2 METHODS: Test methods for strafing
+    public void leftAutoStrafe(double targetHeading, double power) {
+
+            // If it is too far right, adjust
+            if (getHeading() < targetHeading) {
+                setPower(
+                    power - 0.05,
+                    power + 0,
+                    power + 0,
+                    power + 0
+                );
+            }
+            // If it is too far left, adjust
+            else if (getHeading() > targetHeading) {
+                setPower(
+                    power + 0,
+                    power - 0.05,
+                    power + 0,
+                    power + 0
+                );
+            }
+            // Maintain otherwise
+            else {
+                setPower(power, power, power, power);
+            }
+        }
+
+    public void rightAutoStrafe(double targetHeading, double power) {
+
+            // If it is too far right, adjust
+            if (getHeading() < targetHeading) {
+                setPower(
+                    power + 0,
+                    power + 0,
+                    power + 0,
+                    power + 0.05
+                );
+            }
+            // If it is too far left, adjust
+            else if (getHeading() > targetHeading) {
+                setPower(
+                    power + 0,
+                    power + 0.05,
+                    power + 0,
+                    power + 0
+                );
+            }
+            // Maintain otherwise
+            else {
+                setPower(power, power, power, power);
+            }
+        }
+
     // Method for driving forward/straight while maintaining a constant heading
     public void move(double targetMM, double targetHeading, double power) {
         // Setting the initial starting position of the robot
@@ -289,6 +342,10 @@ public class RobotHardware {
 
     public double getRightMM() {
         return ticksToMM(rightEncoder.getCurrentPosition());
+    }
+
+    public double getLiftMM() {
+        return ticksToMM(slideLiftEncoder.getCurrentPosition());
     }
 
     public double getHeading() {

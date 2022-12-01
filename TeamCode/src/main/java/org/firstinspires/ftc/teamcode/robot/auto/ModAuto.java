@@ -17,7 +17,7 @@ public class ModAuto extends LinearOpMode {
           public void run() {
               robot.raiseLift(605, 0.85);
 
-              robot.move(17, robot.getHeading(), 0.4);
+              robot.move(15, robot.getHeading(), 0.4);
 
               robot.lowerLift(500, -0.3);
 
@@ -38,9 +38,9 @@ public class ModAuto extends LinearOpMode {
 
         slideLiftRaise.start();
 
-        robot.move(615, robot.getHeading(), 0.8);
+        robot.move(610, robot.getHeading(), 0.8);
 
-        while (robot.getHeading() < 49) {
+        while (robot.getHeading() < 48) {
             robot.tankLeft(0.4);
         }
         robot.stopMotors();
@@ -58,7 +58,7 @@ public class ModAuto extends LinearOpMode {
         robot.openGripper();
 
         // Repeat until target/goal is met
-        while (robot.colorSensor.red() < 6000) {
+        while (robot.colorSensor.red() < 4000) {
             // If it is too far right, adjust
             if (robot.getHeading() < -85) {
                 robot.setPower(0.5 - 0.05, 0.5 + 0.05, 0.5 - 0.05, 0.5 + 0.05);
