@@ -67,7 +67,7 @@ public class SignalAuto extends LinearOpMode {
             public void run() {
                 robot.raiseLift(605, 0.85);
 
-                robot.move(13, robot.getHeading(), 0.4);
+                robot.move(20, robot.getHeading(), 0.3);
 
                 robot.lowerLift(500, -0.3);
 
@@ -174,11 +174,7 @@ public class SignalAuto extends LinearOpMode {
 
         slideLiftRaise.start();
 
-        // robot.move(618, robot.getHeading(), 0.6);
-
-        robot.move(800, robot.getHeading(), 0.6);
-
-        robot.reverse(155, robot.getHeading(), -0.5);
+        robot.move(618, robot.getHeading(), 0.5);
 
         wait(500);
 
@@ -187,7 +183,7 @@ public class SignalAuto extends LinearOpMode {
         }
         robot.stopMotors();
 
-        robot.move(73, robot.getHeading(), 0.4);
+        robot.move(80, robot.getHeading(), 0.4);
 
         wait(3250);
 
@@ -203,7 +199,7 @@ public class SignalAuto extends LinearOpMode {
 
         robot.raiseLift(200, 0.5);
 
-       secondLiftRaise.start();
+        secondLiftRaise.start();
 
         robot.reverse(275, -85, -0.5);
 
@@ -218,10 +214,6 @@ public class SignalAuto extends LinearOpMode {
         }
         else if (tagOfInterest.id == RIGHT) {
 
-        }
-
-        while (opModeIsActive()) {
-            sleep(20);
         }
     }
 
