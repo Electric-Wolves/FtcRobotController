@@ -60,14 +60,14 @@ public class SignalAuto extends LinearOpMode {
         RobotHardware robot = new RobotHardware(hardwareMap);
         SignalPipeline signalPipeline = new SignalPipeline(tagSize, fx, fy, cx, cy);
 
-        Thread slideLiftRaise, slideLiftLower;
+        Thread slideLiftRaise, slideLiftLower, secondLiftRaise;
 
         slideLiftRaise = new Thread() {
             @Override
             public void run() {
                 robot.raiseLift(605, 0.85);
 
-                // robot.move(17, robot.getHeading(), 0.4);
+                robot.move(13, robot.getHeading(), 0.4);
 
                 robot.lowerLift(500, -0.3);
 
@@ -78,7 +78,20 @@ public class SignalAuto extends LinearOpMode {
         slideLiftLower = new Thread() {
             @Override
             public void run() {
-                robot.lowerLift(100, -0.85);
+                robot.lowerLift(75, -0.65);
+            }
+        };
+
+        secondLiftRaise = new Thread() {
+            @Override
+            public void run() {
+                robot.raiseLift(605, 0.85);
+
+                robot.move(125, 41, 0.4);
+
+                robot.lowerLift(500, -0.3);
+
+                robot.openGripper();
             }
         };
 
@@ -161,18 +174,41 @@ public class SignalAuto extends LinearOpMode {
 
         slideLiftRaise.start();
 
-        robot.move(618, robot.getHeading(), 0.6);
+        // robot.move(618, robot.getHeading(), 0.6);
 
-        while (robot.getHeading() < 42) {
+        robot.move(800, robot.getHeading(), 0.6);
+
+        robot.reverse(155, robot.getHeading(), -0.5);
+
+        wait(500);
+
+        while (robot.getHeading() < 45) {
             robot.tankLeft(0.4);
         }
         robot.stopMotors();
 
-        robot.move(73, robot.getHeading(), 0.7);
+        robot.move(73, robot.getHeading(), 0.4);
 
-        wait(4000);
+        wait(3250);
 
         slideLiftLower.start();
+
+        robot.reverse(150, robot.getHeading(), -0.5);
+
+        robot.turnToAngle(-85, 0.4);
+
+        robot.move(285, -85, 0.5);
+
+        robot.closeGripper();
+
+        robot.raiseLift(200, 0.5);
+
+       secondLiftRaise.start();
+
+        robot.reverse(275, -85, -0.5);
+
+        robot.turnToAngle(41, 0.5);
+
 
         if (tagOfInterest == null || tagOfInterest.id == MIDDLE) {
 

@@ -135,19 +135,19 @@ public class RobotHardware {
             // If it is too far right, adjust
             if (getHeading() < targetHeading) {
                 setPower(
-                    power - 0.05,
-                    power + 0,
-                    power + 0,
-                    power + 0
+                    (-power) + 0.05,
+                    (power) + 0,
+                    (power) + 0,
+                    (-power) + 0
                 );
             }
             // If it is too far left, adjust
             else if (getHeading() > targetHeading) {
                 setPower(
-                    power + 0,
-                    power - 0.05,
-                    power + 0,
-                    power + 0
+                    (-power) + 0,
+                    (power) + 0,
+                    (power) + 0.05,
+                    (-power) + 0
                 );
             }
             // Maintain otherwise
@@ -161,19 +161,19 @@ public class RobotHardware {
             // If it is too far right, adjust
             if (getHeading() < targetHeading) {
                 setPower(
-                    power + 0,
-                    power + 0,
-                    power + 0,
-                    power + 0.05
+                    (power) + 0,
+                    (-power) + 0,
+                    (-power) + 0,
+                    (power) + 0.05
                 );
             }
             // If it is too far left, adjust
             else if (getHeading() > targetHeading) {
                 setPower(
-                    power + 0,
-                    power + 0.05,
-                    power + 0,
-                    power + 0
+                    (power) + 0,
+                    (-power) + 0.05,
+                    (-power) + 0,
+                    (power) + 0
                 );
             }
             // Maintain otherwise
@@ -302,12 +302,12 @@ public class RobotHardware {
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void openGripper() {
+    public void closeGripper() {
         leftGrip.setPosition(0.5);
         rightGrip.setPosition(0.5);
     }
 
-    public void closeGripper() {
+    public void openGripper() {
         leftGrip.setPosition(0);
         rightGrip.setPosition(1);
     }
@@ -315,7 +315,6 @@ public class RobotHardware {
     public void raiseLift(double targetMM, double power) {
         while (ticksToMM(slideLiftEncoder.getCurrentPosition()) < targetMM) {
             slideLift.setPower(power);
-            closeGripper();
         }
         slideLift.setPower(0);
     }
@@ -323,7 +322,6 @@ public class RobotHardware {
     public void lowerLift(double targetMM, double power) {
         while (ticksToMM(slideLiftEncoder.getCurrentPosition()) > targetMM) {
             slideLift.setPower(power);
-            closeGripper();
         }
         slideLift.setPower(0);
     }
