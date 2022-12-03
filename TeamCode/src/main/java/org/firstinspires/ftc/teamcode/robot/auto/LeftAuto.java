@@ -34,8 +34,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "SignalAutonomous", group = "Testing")
-public class SignalAuto extends LinearOpMode {
+@Autonomous(name = "Left Autonomous", group = "Testing")
+public class LeftAuto extends LinearOpMode {
     static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
@@ -62,23 +62,24 @@ public class SignalAuto extends LinearOpMode {
 
         Thread slideLiftRaise, slideLiftLower, secondLiftRaise;
 
+        // Pre-Load Drop
         slideLiftRaise = new Thread() {
             @Override
             public void run() {
                 robot.raiseLift(605, 0.85);
 
-                robot.move(20, robot.getHeading(), 0.3);
+                robot.move(45, robot.getHeading(), 0.3);
 
-                robot.lowerLift(500, -0.3);
+                robot.lowerLift(100, -0.3); //150
 
                 robot.openGripper();
             }
         };
 
-        slideLiftLower = new Thread() {
+        /* slideLiftLower = new Thread() {
             @Override
             public void run() {
-                robot.lowerLift(75, -0.65);
+                robot.lowerLift(375, -0.65);
             }
         };
 
@@ -93,8 +94,9 @@ public class SignalAuto extends LinearOpMode {
 
                 robot.openGripper();
             }
-        };
+        };*/
 
+        // Lines 100 -175: Camera detection
         AprilTagDetection tagOfInterest = null;
 
         robot.camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -172,28 +174,37 @@ public class SignalAuto extends LinearOpMode {
             telemetry.update();
         }
 
-        slideLiftRaise.start();
+        double relativeOrigin = robot.getHeading(); // Set the robot's current heading at 0
 
-        robot.move(618, robot.getHeading(), 0.5);
+        robot.move(800, relativeOrigin, 0.6); // Drive forward to push signal cone out of the robot's path
 
-        wait(500);
+        wait(100); // Pause slightly
 
-        while (robot.getHeading() < 45) {
+        slideLiftRaise.start(); // Begin raising the lift in preparation for the pre-load cone
+
+        robot.reverse(182, relativeOrigin, -0.5); // Drive in reverse to prepare for the pre-load drop
+
+        // Turn to face the junction (187 - 189)
+        while (robot.getHeading() < 30) {
             robot.tankLeft(0.4);
         }
-        robot.stopMotors();
+        robot.stopMotors(); // Stop
 
-        robot.move(80, robot.getHeading(), 0.4);
+        robot.move(85, robot.getHeading(), 0.6); // Drive up to the junction
 
-        wait(3250);
+        wait(8000); // Wait for the thread to finish
 
-        slideLiftLower.start();
+        robot.reverse(150, 30, -0.5); // Drive away from the junction
 
-        robot.reverse(150, robot.getHeading(), -0.5);
+        wait (5000); // Wait for tbe thread to finish
+
+      /*  slideLiftLower.start();
+
+        robot.reverse(100, robot.getHeading(), -0.5);
 
         robot.turnToAngle(-85, 0.4);
 
-        robot.move(285, -85, 0.5);
+        robot.move(225, -85, 0.5);
 
         robot.closeGripper();
 
@@ -204,19 +215,33 @@ public class SignalAuto extends LinearOpMode {
         robot.reverse(275, -85, -0.5);
 
         robot.turnToAngle(41, 0.5);
+*/
 
-
+        // Parking for positions: 2 & 5
         if (tagOfInterest == null || tagOfInterest.id == MIDDLE) {
-
+            robot.turnToAngle(-175, 0.5); // Turn to face the Driver Box
+            robot.move(150, -175, 0.5); // Drive to the middle of the square
         }
+
+        // Parking for position: 1 & 4
         else if (tagOfInterest.id == LEFT) {
-
+            robot.turnToAngle(85, 0.5); // Turn to face 90 degrees to the left of the Driver Box
+            robot.move(300, 85, 0.5); // Drive 1 square
+            robot.turnToAngle(-175, 0.5); // Turn to face the Driver Box
+            robot.move(150, -175, 0.5); // Drive to the middle of the square
         }
+
+        // Parking for positions: 3 & 6
         else if (tagOfInterest.id == RIGHT) {
-
+            robot.turnToAngle(-85, 0.5); // Turn to face 90 degrees to the right of the Drive Box
+            robot.move(300, 0.85, 0.5); // Drive 1 square
+            robot.turnToAngle(0, 0.5); // Turn to face away from the Driver Box
+            robot.reverse(150, 0,-0.5); // Drive to the middle of the square
         }
+        robot.stopMotors(); // Stop moving
     }
 
+    // More camera code
     @SuppressLint("DefaultLocale")
     void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
@@ -228,7 +253,7 @@ public class SignalAuto extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 
-    public void wait(int ms) {
+    public void wait(int ms) { // Waiting method
         try {
             Thread.sleep(ms);
         } catch (InterruptedException ex) {
