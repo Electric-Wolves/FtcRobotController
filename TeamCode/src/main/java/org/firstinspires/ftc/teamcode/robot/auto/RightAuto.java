@@ -34,23 +34,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Right Autonomous", group = "Testing")
+@Autonomous(name = "Right Auto FLAP", group = "Testing")
 public class RightAuto extends LinearOpMode {
     static final double FEET_PER_METER = 3.28084;
 
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
-
-    // UNITS ARE METERS
-    double tagSize = 0.166;
-
-    // Tag ids for Parking Positions from 36h11 april tags
     int LEFT = 16;
     int MIDDLE = 19;
     int RIGHT = 13;
@@ -58,7 +45,7 @@ public class RightAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         RobotHardware robot = new RobotHardware(hardwareMap);
-        SignalPipeline signalPipeline = new SignalPipeline(tagSize, fx, fy, cx, cy);
+        SignalPipeline signalPipeline = new SignalPipeline(0.166, 578.272, 578.272, 402.145, 221.506);
 
         Thread slideLiftRaise, slideLiftLower, secondLiftRaise;
 
@@ -74,7 +61,7 @@ public class RightAuto extends LinearOpMode {
 
                 robot.openGripper(); // Open the gripper to drop the cone
 
-                robot.lowerLift(100, -0.4); // Lower the lift the remaining distance
+                robot.lowerLift(65, -0.4); // Lower the lift the remaining distance
             }
         };
 
@@ -98,7 +85,7 @@ public class RightAuto extends LinearOpMode {
             }
         };*/
 
-        // Lines 100 -175: Camera detection
+        // Lines 102 -177: Camera detection
         AprilTagDetection tagOfInterest = null;
 
         robot.camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -186,8 +173,8 @@ public class RightAuto extends LinearOpMode {
 
         robot.reverse(182, relativeOrigin, -0.3); // Drive in reverse to prepare for the pre-load drop
 
-        // Turn to face the junction (187 - 189)
-        while (robot.getHeading() < 30) {
+        // Turn to face the junction
+        while (robot.getHeading() < 38) {
             robot.tankLeft(0.4);
         }
         robot.stopMotors(); // Stop
@@ -195,12 +182,6 @@ public class RightAuto extends LinearOpMode {
         robot.move(85, robot.getHeading(), 0.4); // Drive up to the junction
 
         wait(9000); // Wait for the thread to finish
-
-        robot.reverse(35, 30, -0.5);
-
-        robot.turnToAngle(65, 0.5);
-
-        robot.reverse(65, 30, -0.5); // Drive away from the junction
 
       /*  slideLiftLower.start();
 
@@ -223,12 +204,16 @@ public class RightAuto extends LinearOpMode {
 
         // Parking for positions: 2 & 5
         if (tagOfInterest == null || tagOfInterest.id == MIDDLE) {
-            robot.turnToAngle(-179, 0.3); // Turn to face the Driver Box
+            robot.reverse(50, 30, -0.5); // Drive away from the junction slightly
+            robot.turnToAngle(-170, 0.3); // Turn to face the Driver Box
             robot.move(115, -170, 0.4); // Drive to the middle of the square
         }
 
         // Parking for position: 1 & 4
         else if (tagOfInterest.id == LEFT) {
+            robot.reverse(30, 30, -0.5); // Drive away from the junction slightly
+            robot.turnToAngle(65, 0.5); // Turn away from junction
+            robot.reverse(65, 30, -0.5); // Drive away from the junction
             robot.turnToAngle(85, 0.5); // Turn to face 90 degrees to the left of the Driver Box
             robot.move(300, 85, 0.5); // Drive 1 square
             robot.turnToAngle(-170, 0.5); // Turn to face the Driver Box
@@ -237,8 +222,11 @@ public class RightAuto extends LinearOpMode {
 
         // Parking for positions: 3 & 6
         else if (tagOfInterest.id == RIGHT) {
+            robot.reverse(30, 30, -0.5); // Drive away from the junction slightly
+            robot.turnToAngle(65, 0.5); // Turn away from junction
+            robot.reverse(65, 30, -0.5); // Drive away from the junction
             robot.turnToAngle(-85, 0.5); // Turn to face 90 degrees to the right of the Drive Box
-            robot.move(300, 0.85, 0.5); // Drive 1 square
+            robot.move(275, 0.85, 0.5); // Drive 1 square
             robot.turnToAngle(-85, 0.5);
         }
         robot.stopMotors(); // Stop moving

@@ -32,7 +32,6 @@ public class RobotHardware {
     public DcMotor rightEncoder = null;
     public DcMotor slideLiftEncoder = null;
 
-    public DistanceSensor distanceLeft = null;
     public DistanceSensor distanceRight = null;
 
     public ColorSensor colorSensor = null;
@@ -68,7 +67,6 @@ public class RobotHardware {
         rightEncoder = frontRight;
         slideLiftEncoder = backLeft;
 
-        distanceLeft = hardwareMap.get(DistanceSensor.class, "distanceLeft");
         distanceRight = hardwareMap.get(DistanceSensor.class, "distanceRight");
 
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -303,13 +301,13 @@ public class RobotHardware {
     }
 
     public void closeGripper() {
-        leftGrip.setPosition(0.5);
-        rightGrip.setPosition(0.5);
+        leftGrip.setPosition(1);
+        rightGrip.setPosition(0);
     }
 
     public void openGripper() {
-        leftGrip.setPosition(0);
-        rightGrip.setPosition(1);
+        leftGrip.setPosition(0.5);
+        rightGrip.setPosition(0.5);
     }
 
     public void raiseLift(double targetMM, double power) {
@@ -324,10 +322,6 @@ public class RobotHardware {
             slideLift.setPower(power);
         }
         slideLift.setPower(0);
-    }
-
-    public double getFirstDist() {
-        return distanceLeft.getDistance(DistanceUnit.MM);
     }
 
     public double getCenterDist() {
